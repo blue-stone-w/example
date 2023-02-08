@@ -98,7 +98,19 @@ POINT_CLOUD_REGISTER_POINT_STRUCT (PointXYZIRPYT,
 
 
 /******************************************************************************/
+class CloudInfo
+{
+ public:
+  // Cloud Info
+  std_msgs::Header header;
 
+  std::vector<int> startRingIndex; // a horizontal scan is a ring
+  std::vector<int> endRingIndex;
+
+  pcl::PointCloud<PointXYZIRT> cloudDeskewed;  // original deskewed cloud 
+  pcl::PointCloud<PointType>   cloudEdge    ;  // extracted edge feature
+  pcl::PointCloud<PointType>   cloudSurf    ;  // extracted surface feature
+};
 
 
 /******************************************************************************/
