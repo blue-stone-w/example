@@ -106,7 +106,7 @@ void findSync(vector<Pose>& posetoSync, vector<Pose>& rtkFixed, vector<Pose>& rt
 		}
 	}
 }
-int main(int argc, char** argv) {
+int sync_from_file() {
 	// extract rtks from file to vector
 	vector<Pose> orirtk, oriPose;
 

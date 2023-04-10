@@ -3,7 +3,7 @@
 #include <pcl/point_types.h>//PCL对各种格式的点的支持头文件
 #include <pcl/visualization/cloud_viewer.h>//点云查看窗口头文件
 
-int main(int argc, char** argv){
+int ReadCloud(){
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl:PointXYZ>)// 创建点云（指针）
 
 	if(pcl::io::loadPCDFile<PointXYZ>("model.pcd", *cloud)==-1){ //* 读入PCD格式的文件，如果文件不存在，返回-1
