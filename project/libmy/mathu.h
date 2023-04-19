@@ -12,7 +12,7 @@ constexpr static double degTorad = M_PI / 180, radTodeg = 180 / M_PI;
 
 /******** vector6d(xyzrpy)  aff3d ********/
 template <typename S1, typename S2>
-void vec6D2Aff(std::vector<S1> &poseV6, Eigen::Transform<S2, 3, Eigen::Affine> &poseA3)
+void vec6D2Aff(std::vector<S1> poseV6, Eigen::Transform<S2, 3, Eigen::Affine> &poseA3)
 {
   auto A = cos(poseV6[5]), B = sin(poseV6[5]), C = cos(poseV6[4]), D = sin(poseV6[4]),
        E = cos(poseV6[3]), F = sin(poseV6[3]), DE = D * E, DF = D * F;
@@ -146,12 +146,12 @@ static Eigen::Quaternion<S1> rpy2Quat(const Eigen::Matrix<S2, 3, 1> &rpy)
   return Q;
 }
 template <typename S1, typename S2>
-static Eigen::Matrix<S1, 3, 1> QuaternionToEuler(Eigen::Quaternion<S2> quat)
+static Eigen::Matrix<S1, 3, 1> QuaternionToEuler(Eigen::Quaternion<S2, 0> quat)
 {
   double roll, yaw, pitch;
   double qw = quat.w(), qx = quat.x(), qy = quat.y(), qz = quat.z();
-  roll  = atan2f(2.f * (qw * qz + qx * qy), 1 - 2 * (qz * qz + qx * qx)); // Z
-  yaw   = asinf(2.f * (qw * qx - qy * qz));                               // Y
+  yaw   = atan2f(2.f * (qw * qz + qx * qy), 1 - 2 * (qz * qz + qx * qx)); // Z
+  roll  = asinf(2.f * (qw * qx - qy * qz));                               // Y
   pitch = atan2f(2.f * (qw * qy + qz * qx), 1 - 2 * (qy * qy + qx * qx)); // X
 
   return Eigen::Matrix<S1, 3, 1>(roll, pitch, yaw);

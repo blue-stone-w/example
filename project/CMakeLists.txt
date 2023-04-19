@@ -4,7 +4,7 @@ project(name)
 # 编译类型为release，不是debug
 set(CMAKE_BUILD_TYPE "Release")
 
-# 设置C++编译选项，使用C++11版本标准库；
+# 设置C++编译选项，使用C++17版本标准库；
 set(CMAKE_CXX_FLAGS "-std=c++17")
 
 # 设置编译类型为Release时的编译选项：-03（最高级优化） -wall（开启警告） -g（开启调试）
@@ -25,11 +25,26 @@ include_directories(${PROJECT_SOURCE_DIR})
 # ##########
 # # Build ##
 # ##########
-add_executable(exe src/1.cpp src/2.cpp)
 
-# add_dependencies(node  ${dep})
-# target_link_libraries(node ${lib})
+add_executable(exe src/main.cpp)
+target_link_libraries(exe ${PCL_LIBRARIES})
+
+add_executable(space src/space.cpp)
+target_link_libraries(space ${PCL_LIBRARIES})
 
 # ---------------------------------------------------------------------------------------
 # Install
 # ---------------------------------------------------------------------------------------
+# install(TARGETS ${PROJECT_NAME}_node
+# 	ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+# 	LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+# 	RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# 	)
+
+# install(DIRECTORY
+#   launch
+#   config
+#   msg
+#   srv
+#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+#   )
