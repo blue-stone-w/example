@@ -6,37 +6,43 @@
 
 int main(int argc, char **argv)
 {
-  Eigen::Affine3f l2t = pcl::getTransformation(7.3, 0.4, 0.0, 0.0, 0.0, 1.6).inverse();
-  Eigen::Affine3f c2l = pcl::getTransformation(0.28, -0.25, -0.58, -0.07, 0.01, 0.066);
+  float x = 0.28, y = -0.25, z = -0.58, roll = 0.07, pitch = 0.1, yaw = 0.066;
+  Eigen::Affine3f aff = pcl::getTransformation(x, y, z, roll, pitch, yaw);
+  Eigen::Vector4f curPlane(0, 0, 1, 1);
 
-  Eigen::Affine3f aff0(Eigen::Matrix<float, 4, 4>::Zero()); // right to left
-  aff0(0, 0) = -1;
-  aff0(1, 2) = -1;
-  aff0(2, 1) = -1;
-  aff0(3, 3) = 1;
+  auto p1 = cos(yaw) * cos(pitch) * curPlane[0]
+            + (sin(yaw) * cos(pitch)) * curPlane[1]
+            + (-sin(pitch)) * curPlane[2];
 
-  std::cout << (aff0 * c2l * l2t).matrix() << std::endl;
+  auto p2 = (cos(yaw) * sin(pitch) * sin(roll) - sin(yaw) * cos(roll)) * curPlane[0]
+            + (cos(yaw) * cos(roll) + sin(yaw) * sin(pitch) * sin(roll)) * curPlane[1]
+            + (cos(pitch) * sin(roll)) * curPlane[2];
 
-  Eigen::Matrix3f cameraMatrix;
-  cameraMatrix << 1367.4187138648322, 0.0, 981.879780704955,
-      0.0, 1379.561837746044, 520.767366835325,
-      0.0, 0.0, 1.0;
-  std::cout << cameraMatrix(0, 2) << std::endl;
+  auto p3 = (sin(yaw) * sin(roll) + cos(yaw) * sin(pitch) * cos(roll)) * curPlane[0]
+            + (sin(yaw) * sin(pitch) * cos(roll) - cos(yaw) * sin(roll)) * curPlane[1]
+            + (cos(pitch) * cos(roll)) * curPlane[2];
+  auto p4 = curPlane[0] * x + curPlane[1] * y + curPlane[2] * z + 1;
 
-  Eigen::Affine3f cm(Eigen::Matrix<float, 4, 4>::Zero());
-  cm.matrix().block<3, 3>(0, 0) = cameraMatrix;
+  Eigen::Vector4f pt1(p1, p2, p3, p4);
+  Eigen::Matrix<float, 1, 4> pt2 = curPlane.transpose() * aff.matrix();
 
-  Eigen::Affine3f t2img = cm * aff0 * c2l * l2t;
-  std::cout << t2img.matrix() << std::endl;
+  std::cout << pt1[0] << " -------------- " << pt2[0] << std::endl;
+  std::cout << pt1[1] << " -------------- " << pt2[1] << std::endl;
+  std::cout << pt1[2] << " -------------- " << pt2[2] << std::endl;
+  std::cout << pt1[3] << " -------------- " << pt2[3] << std::endl;
 
-  Eigen::Vector4f pt1(15, 0, 0, 0);
-  Eigen::Vector4f pt2;
-  pt2 = t2img * pt1;
-  pt2 /= pt2[2];
-  Eigen::Vector4i pixel = pt2.cast<int>();
-
-  std::cout << pixel << std::endl;
-
+  if (std::abs(p1 - pt2[0]) < 0.0001)
+  {
+    std::cout << "111111111111111111111" << std::endl;
+  }
+  if (std::abs(p2 - pt2[1]) < 0.0001)
+  {
+    std::cout << "222222222222222222222" << std::endl;
+  }
+  if (std::abs(p3 - pt2[2]) < 0.0001)
+  {
+    std::cout << "333333333333333333333" << std::endl;
+  }
 
   return 0;
 }

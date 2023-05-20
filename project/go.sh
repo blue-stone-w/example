@@ -1,4 +1,4 @@
 cd build &&
 cmake .. &&
 make &&
-./space
+./exe

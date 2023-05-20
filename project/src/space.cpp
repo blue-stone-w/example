@@ -54,6 +54,41 @@ void trans()
   Eigen::Affine3f t2img = cm * aff0 * c2l * l2t;
 }
 
+void vecRotation()
+{
+  Eigen::AngleAxisd rotation_vector1(M_PI / 4, Eigen::Vector3d(0, 0, 1));
+  Eigen::Vector3d eulerAngle1 = rotation_vector1.matrix().eulerAngles(0, 1, 2);
+  // std::cout << std::fixed << std::setprecision(5) << eulerAngle1[0] << ", " << eulerAngle1[1] << ", " << eulerAngle1[2] << ", " << std::endl;
+}
+
+void cvCameraRT2Euler()
+{
+  // cv::Mat cameraMatrix, distCoeffs, R, T;;
+  Eigen::Vector3d R(3), T(3); // calaulate from cv function
+  double angle = sqrt(R[0] * R[0] + R[1] * R[1] + R[2] * R[2]);
+  Eigen::Vector3d axis(R[0] / angle, R[1] / angle, R[2] / angle);
+  Eigen::AngleAxisd rotation_vector1(angle, axis);
+  Eigen::Vector3d rpy = rotation_vector1.matrix().eulerAngles(0, 1, 2);
+
+  // std::cout << std::fixed << std::setprecision(5) << std::showpos
+  //           << T.at<double>(i, 0) << ", " << T.at<double>(i, 1) << ", " << T.at<double>(i, 2) << "; "
+  //           << rpy[0] << ", " << rpy[1] << ", " << rpy[2] << std::endl;
+  Eigen::Affine3f aff;
+
+  Eigen::VectorXd euler(6); // x,y,z,roll,pitch,yaw
+
+  euler[0] = T[0];
+  euler[1] = T[1];
+  euler[2] = T[2];
+  euler[3] = rpy[0];
+  euler[4] = rpy[1];
+  euler[5] = rpy[2];
+
+  aff = pcl::getTransformation(euler[0], euler[1], euler[2], euler[3], euler[4], euler[5]);
+  // world frame and camera frame are definited by cv
+  // poseC = aff * poseW;
+}
+
 class Merge
 {};
 

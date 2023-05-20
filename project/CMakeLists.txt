@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.10.2) # VERSION 3.16.3
+# 指定cmake的最低版本。在实际使用时，如果涉及的项目不复杂，随便选择一个版本即可。如果报错了再重选最低版本即可。
+cmake_minimum_required(VERSION 3.10.2)
+# 指定该项目的名称，此处该项目的名称即为“name”
 project(name)
 
 # 编译类型为release，不是debug

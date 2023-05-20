@@ -10,10 +10,35 @@ namespace MyMath
 /* constant */
 constexpr static double degTorad = M_PI / 180, radTodeg = 180 / M_PI;
 
+// auto p1 = cos(yaw) * cos(pitch) * curPlane[0]
+//           + (cos(yaw) * sin(pitch) * sin(roll) - sin(yaw) * cos(roll)) * curPlane[1]
+//           + (sin(yaw) * sin(roll) + cos(yaw) * sin(pitch) * cos(roll)) * curPlane[2]
+//           + x;
+// auto p2 = sin(yaw) * cos(pitch) * curPlane[0]
+//           + (cos(yaw) * cos(roll) + sin(yaw) * sin(pitch) * sin(roll)) * curPlane[1]
+//           + (sin(yaw) * sin(pitch) * cos(roll) - cos(yaw) * sin(roll)) * curPlane[2]
+//           + y;
+// auto p3 = -sin(pitch) * curPlane[0]
+//           + cos(pitch) * sin(roll) * curPlane[1]
+//           + cos(pitch) * cos(roll) * curPlane[2]
+//           + z;
+
 /******** vector6d(xyzrpy)  aff3d ********/
 template <typename S1, typename S2>
 void vec6D2Aff(std::vector<S1> poseV6, Eigen::Transform<S2, 3, Eigen::Affine> &poseA3)
 {
+  // cos(yaw)*cos(pitch) cos(yaw)*sin(pitch)*sin(roll)-sin(yaw)*cos(roll) sin(yaw)*sin(roll)+cos(yaw)*sin(pitch)*cos(roll)
+  // sin(yaw)*cos(pitch) cos(yaw)*cos(roll)+sin(yaw)*sin(pitch)*sin(roll) sin(yaw)*sin(pitch)*cos(roll)-cos(yaw)*sin(roll)
+  // -sin(pitch)         cos(pitch)*sin(roll)                             cos(pitch)*cos(roll)
+
+  // poseA3(0, 0) = A * C; poseA3(0, 1) = A * DF - B * E; poseA3(0, 2) = B * F + A * DE; poseA3(0, 3) = poseV6[0];
+  //
+  // poseA3(1, 0) = B * C; poseA3(1, 1) = A * E + B * DF; poseA3(1, 2) = B * DE - A * F; poseA3(1, 3) = poseV6[1];
+  //
+  // poseA3(2, 0) = -D;    poseA3(2, 1) = C * F;          poseA3(2, 2) = C * E;          poseA3(2, 3) = poseV6[2];
+  //
+  // poseA3(3, 0) = 0;     poseA3(3, 1) = 0;              poseA3(3, 2) = 0;              poseA3(3, 3) = 1;
+
   auto A = cos(poseV6[5]), B = sin(poseV6[5]), C = cos(poseV6[4]), D = sin(poseV6[4]),
        E = cos(poseV6[3]), F = sin(poseV6[3]), DE = D * E, DF = D * F;
 
